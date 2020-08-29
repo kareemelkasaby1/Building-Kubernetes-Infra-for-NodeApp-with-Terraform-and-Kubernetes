@@ -25,8 +25,9 @@ resource "kubernetes_deployment" "jenkins" {
         security_context {
           fs_group = "1000"
         }
+        service_account_name = "${kubernetes_service_account.jenkins-service-account.metadata.0.name}"
         container {
-          image = "kareemelkasaby/jenkins"
+          image = "kareemelkasaby/jenkins:v1"
           name  = "jenkins"
           port {
             name = "http-port"

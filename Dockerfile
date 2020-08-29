@@ -43,6 +43,26 @@ RUN pip install awscli --upgrade --user
 # add aws cli location to path
 ENV PATH=~/.local/bin:$PATH
 
+
+################################
+# Install ansible
+################################
+
+RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+RUN apt update -y
+RUN apt install ansible -y
+RUN ansible --version
+
+
+################################
+# Install kubectl
+################################
+
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+RUN chmod +x ./kubectl
+RUN mv ./kubectl /usr/local/bin/kubectl
+
 #open container Port
 EXPOSE 8080
 
