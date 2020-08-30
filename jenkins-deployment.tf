@@ -28,6 +28,10 @@ resource "kubernetes_deployment" "jenkins" {
           name = "kubectl"
           empty_dir {}
         }
+        volume {
+          name = "docker"
+          empty_dir {}
+        }
         init_container {
           name = "install-kubectl"
           image = "allanlei/kubectl"
@@ -37,10 +41,19 @@ resource "kubernetes_deployment" "jenkins" {
           }
           command = ["cp", "/usr/local/bin/kubectl", "/data/kubectl"]
         }
+        init_container {
+          name = "install-docker"
+          image = "docker:stable"
+          volume_mount {
+            name = "docker"
+            mount_path = "/data"
+          }
+          command = ["cp", "/usr/local/bin/docker", "/data/docker"]
+        }
         service_account_name = "${kubernetes_service_account.jenkins-service-account.metadata.0.name}"
         automount_service_account_token = "true"
         container {
-          image = "jenkins/jenkins:lts"
+          image = "kareemelkasaby/jenkinsfordockerminikube:latest"
           name  = "jenkins"
           port {
             name = "http-port"
@@ -58,6 +71,27 @@ resource "kubernetes_deployment" "jenkins" {
               name = "kubectl"
               sub_path = "kubectl"
               mount_path = "/usr/local/bin/kubectl"
+          }
+          volume_mount{
+              name = "docker"
+              sub_path = "docker"
+              mount_path = "/usr/local/bin/docker"
+          }
+          env {
+            name = "DOCKER_TLS_VERIFY"
+            value = "1"
+          }
+          env {
+            name = "DOCKER_HOST"
+            value = "tcp://192.168.99.113:2376"
+          }
+          env {
+            name = "DOCKER_CERT_PATH"
+            value = "/mnt/certs"
+          }
+          env {
+            name = "MINIKUBE_ACTIVE_DOCKERD"
+            value = "minikube"
           }
         }
         volume{
