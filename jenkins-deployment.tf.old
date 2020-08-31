@@ -36,13 +36,6 @@ resource "kubernetes_deployment" "jenkins" {
           name = "terraform"
           empty_dir {}
         }
-        volume {
-          name = "docker-socket"
-          host_path {
-            path = "/var/run/docker.sock"
-            type = "File"
-          }
-        }
         init_container {
           name = "install-kubectl"
           image = "allanlei/kubectl"
@@ -73,7 +66,7 @@ resource "kubernetes_deployment" "jenkins" {
         service_account_name = "${kubernetes_service_account.jenkins-service-account.metadata.0.name}"
         automount_service_account_token = "true"
         container {
-          image = "kareemelkasaby/jenkinsfordockerminikube:latest"
+          image = "kareemelkasaby/jenkinsfordockerminikube:v4"
           name  = "jenkins"
           port {
             name = "http-port"
@@ -102,11 +95,23 @@ resource "kubernetes_deployment" "jenkins" {
               sub_path = "terraform"
               mount_path = "/usr/local/bin/terraform"
           }
-          volume_mount {
-            mount_path = "/var/run/docker.sock"
-            name = "docker-socket"
-          }
           #run the command of minikube docker-env and take the env names and values from it
+          env {
+            name = "DOCKER_TLS_VERIFY"
+            value = "1"
+          }
+          env {
+            name = "DOCKER_HOST"
+            value = "tcp://192.168.99.113:2376"
+          }
+          env {
+            name = "DOCKER_CERT_PATH"
+            value = "/mnt/certs"
+          }
+          env {
+            name = "MINIKUBE_ACTIVE_DOCKERD"
+            value = "minikube"
+          }
         }
         volume{
             name = "jenkins-storage"
