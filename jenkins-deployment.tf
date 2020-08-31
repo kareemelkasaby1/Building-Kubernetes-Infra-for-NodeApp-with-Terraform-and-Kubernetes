@@ -32,6 +32,10 @@ resource "kubernetes_deployment" "jenkins" {
           name = "docker"
           empty_dir {}
         }
+        volume {
+          name = "terraform"
+          empty_dir {}
+        }
         init_container {
           name = "install-kubectl"
           image = "allanlei/kubectl"
@@ -50,10 +54,19 @@ resource "kubernetes_deployment" "jenkins" {
           }
           command = ["cp", "/usr/local/bin/docker", "/data/docker"]
         }
+        init_container {
+          name = "install-terraform"
+          image = "hashicorp/terraform:light"
+          volume_mount {
+            name = "terraform"
+            mount_path = "/data"
+          }
+          command = ["cp", "/bin/terraform", "/data/terraform"]
+        }
         service_account_name = "${kubernetes_service_account.jenkins-service-account.metadata.0.name}"
         automount_service_account_token = "true"
         container {
-          image = "kareemelkasaby/jenkinsfordockerminikube:latest"
+          image = "kareemelkasaby/jenkinsfordockerminikube:v4"
           name  = "jenkins"
           port {
             name = "http-port"
@@ -77,6 +90,12 @@ resource "kubernetes_deployment" "jenkins" {
               sub_path = "docker"
               mount_path = "/usr/local/bin/docker"
           }
+          volume_mount{
+              name = "terraform"
+              sub_path = "terraform"
+              mount_path = "/usr/local/bin/terraform"
+          }
+          #run the command of minikube docker-env and take the env names and values from it
           env {
             name = "DOCKER_TLS_VERIFY"
             value = "1"
