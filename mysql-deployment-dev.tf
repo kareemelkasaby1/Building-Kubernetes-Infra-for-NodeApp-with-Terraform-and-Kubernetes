@@ -62,6 +62,10 @@ resource "kubernetes_deployment" "mysql-dev" {
               }
             }
           }
+          port {
+            name = "mysql-port"
+            container_port = 3306
+          }
         }
         volume{
             name = "mysql-dev-storage"
