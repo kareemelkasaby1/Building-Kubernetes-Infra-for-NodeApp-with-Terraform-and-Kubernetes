@@ -45,7 +45,7 @@ resource "kubernetes_deployment" "jenkins" {
         }
         init_container {
           name = "install-kubectl"
-          image = "allanlei/kubectl"
+          image = "eslamkarim/jenkins-ansible-kubectl"
           volume_mount {
             name = "kubectl"
             mount_path = "/data"

@@ -26,7 +26,7 @@ resource "kubernetes_deployment" "mysql-test" {
           fs_group = "1000"
         }
         container {
-          image = "mysql:8.0"
+          image = "mysql:5.7"
           name  = "mysql-test"
           port {
             name = "http-port"
