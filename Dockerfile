@@ -15,4 +15,4 @@ RUN apt update -y
 RUN apt install ansible -y
 RUN ansible --version
 
-USER jenkins
+RUN su jenkins

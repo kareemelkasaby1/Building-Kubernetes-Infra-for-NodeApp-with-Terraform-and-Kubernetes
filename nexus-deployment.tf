@@ -32,6 +32,10 @@ resource "kubernetes_deployment" "nexus" {
             name = "http-port"
             container_port = 8081
           }
+          port {
+            name = "private-port"
+            container_port = 8443
+          }
           volume_mount{
             name = "nexus-storage"
             mount_path = "/nexus-data"

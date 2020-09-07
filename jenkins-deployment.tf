@@ -73,7 +73,7 @@ resource "kubernetes_deployment" "jenkins" {
         service_account_name = "${kubernetes_service_account.jenkins-service-account.metadata.0.name}"
         automount_service_account_token = "true"
         container {
-          image = "kareemelkasaby/jenkinsfordockerminikube:latest"
+          image = "kareemelkasaby/jenkinsfordockerminikube:v1"
           name  = "jenkins"
           port {
             name = "http-port"

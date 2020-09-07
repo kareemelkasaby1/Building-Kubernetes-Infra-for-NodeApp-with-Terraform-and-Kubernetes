@@ -8,7 +8,7 @@ resource "kubernetes_persistent_volume_claim" "pvc-nexus" {
     storage_class_name = "standard"
     resources {
       requests = {
-        storage = "1.5Gi"
+        storage = "7Gi"
       }
     }
   }
